@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>For My Chello ❤️</title>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <style>
+    :root { --primary: #ff3b7a; --bg: #fff0f3; }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { margin: 0; min-height: 100svh; display: flex; align-items: center; justify-content: center; background: var(--bg); font-family: 'Arial', sans-serif; overflow: hidden; }
+
+    .card { 
+      background: white; padding: 2rem; border-radius: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); 
+      text-align: center; width: min(450px, 90vw); border: 2px solid #ffccd5; position: relative; z-index: 10; 
+    }
+
+    .gif-wrap img { width: 140px; border-radius: 15px; margin-bottom: 10px; }
+    h1 { color: var(--primary); font-size: 1.6rem; margin: 10px 0; }
+    p { color: #555; line-height: 1.5; }
+    .hidden { display: none; }
+
+    /* Bouquet Game Styles */
+    #bouquet-container { 
+      height: 120px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; 
+      font-size: 2rem; margin: 15px 0; overflow: hidden; background: #fffafb; border-radius: 15px;
+    }
+    .tap-btn { 
+      background: var(--primary); color: white; border: none; padding: 20px; width: 80px; height: 80px; 
+      border-radius: 50%; font-size: 1.5rem; cursor: pointer; transition: 0.1s; box-shadow: 0 5px 15px rgba(255,59,122,0.4);
+    }
+    .tap-btn:active { transform: scale(0.9); }
+
+    /* Decision Phase */
+    .btn-zone { position: relative; height: 160px; width: 100%; margin-top: 1rem; }
+    button.choice { padding: 15px 30px; font-weight: bold; border-radius: 50px; border: none; cursor: pointer; transition: 0.2s; }
+    #yesBtn { background: #2ecc71; color: white; }
+    #noBtn { background: #bdc3c7; color: white; position: absolute; }
+
+    .poem { font-style: italic; color: #7d0633; background: #fff5f7; padding: 15px; border-radius: 15px; border-left: 5px solid var(--primary); text-align: left; margin: 15px 0; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <div id="stage1">
+      <div class="gif-wrap"><img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHpueXN2eHdwZzZ4eXN2eHdwZzZ4eXN2eHdwZzZ4eXN2eHdwZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/MDJ9IbxxvDUQM/giphy.gif"></div>
+      <h1>Hi Agal (Chello)! ❤️</h1>
+      <p>"You are my favorite thought."</p>
+      <button onclick="nextStage(1, 2)" style="background:var(--primary); color:white; padding:15px 30px; border-radius:50px; border:none; width:100%; font-weight:bold;">Start My Surprise ✨</button>
+    </div>
+
+    <div id="stage2" class="hidden">
+      <h1>Build a Bouquet! 🌸</h1>
+      <p>Tap the heart to grow flowers for yourself!</p>
+      <div id="bouquet-container"></div>
+      <button class="tap-btn" id="flowerBtn">❤️</button>
+      <p id="counter">0 / 8</p>
+    </div>
+
+    <div id="stage3" class="hidden">
+      <div class="gif-wrap"><img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3Y4eXN2eHdwZzZ4eXN2eHdwZzZ4eXN2eHdwZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/c7abbR1MlbMDe/giphy.gif"></div>
+      <h1>Chello...</h1>
+      <p>Will you be my Valentine? 🌹</p>
+      <div class="btn-zone" id="zone">
+        <button id="yesBtn" class="choice">YES! 😍</button>
+        <button id="noBtn" class="choice">No 🥺</button>
+      </div>
+    </div>
+
+    <div id="stage4" class="hidden">
+      <h1>Yay! Best News Ever! 🌸</h1>
+      <div class="poem">
+        "Your smile is like a sunrise,<br>
+        Your heart is like a home.<br>
+        With you, I have everything,<br>
+        No matter where we roam."
+      </div>
+      <p>Can't wait for the 14th, Chello! ❤️</p>
+      <div class="gif-wrap"><img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNmc4emh0N3FscXF0N3FscXF0N3FscXF0N3FscXF0N3FscXF0JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1z/KztT2c4u8mYYUiCi7W/giphy.gif"></div>
+    </div>
+  </div>
+
+  <script>
+    function nextStage(current, next) {
+      document.getElementById('stage' + current).classList.add('hidden');
+      document.getElementById('stage' + next).classList.remove('hidden');
+    }
+
+    // Bouquet Game Logic
+    let flowerCount = 0;
+    const flowers = ['🌸', '🌹', '🌺', '🌷', '🌻', '🌼', '💐', '✨'];
+    const container = document.getElementById('bouquet-container');
+    const fBtn = document.getElementById('flowerBtn');
+
+    fBtn.onclick = () => {
+      if(flowerCount < 8) {
+        let span = document.createElement('span');
+        span.innerText = flowers[flowerCount];
+        span.style.animation = "pop 0.3s ease-out";
+        container.appendChild(span);
+        flowerCount++;
+        document.getElementById('counter').innerText = flowerCount + " / 8";
+        
+        // Small haptic feel
+        if (window.navigator.vibrate) window.navigator.vibrate(50);
+
+        if(flowerCount === 8) {
+          setTimeout(() => nextStage(2, 3), 800);
+        }
+      }
+    };
+
+    // Evasive No Button Logic
+    const noBtn = document.getElementById('noBtn');
+    const yesBtn = document.getElementById('yesBtn');
+    const zone = document.getElementById('zone');
+    let yesScale = 1;
+
+    function moveNo() {
+      const maxX = zone.offsetWidth - noBtn.offsetWidth;
+      const maxY = zone.offsetHeight - noBtn.offsetHeight;
+      noBtn.style.left = Math.random() * maxX + 'px';
+      noBtn.style.top = Math.random() * maxY + 'px';
+      yesScale += 0.2;
+      yesBtn.style.transform = `scale(${yesScale})`;
+    }
+
+    noBtn.onmouseover = moveNo;
+    noBtn.ontouchstart = (e) => { e.preventDefault(); moveNo(); };
+
+    yesBtn.onclick = () => {
+      nextStage(3, 4);
+      confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
+    };
+  </script>
+
+  <style>
+    @keyframes pop {
+      0% { transform: scale(0); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</body>
+</html>
